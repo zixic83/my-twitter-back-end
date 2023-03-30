@@ -3,7 +3,15 @@ const cors = require("cors");
 const mongoose = require("mongoose");
 const Tweet = require("./Tweet");
 
-mongoose.connect("mongodb://localhost/myTwitter");
+const connectDB = async () => {
+  try {
+    await mongoose.connect("mongodb://127.0.0.1/myTwitter");
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+connectDB();
 
 const app = express();
 
@@ -22,7 +30,12 @@ app.get("/allTweets", async (req, res) => {
 
 app.post("/tweets", async (req, res) => {
   const tweet = await run(req.body.tweetContent);
-  console.log(tweet)
+  const allTweets = await listAllTweets();
+  res.json(allTweets);
+});
+
+app.delete("/tweets", async (req, res) => {
+  await Tweet.deleteOne({ _id: req.body.id });
   const allTweets = await listAllTweets();
   res.json(allTweets);
 });
@@ -42,4 +55,3 @@ async function listAllTweets() {
   const allPosts = await Tweet.find({});
   return allPosts;
 }
-

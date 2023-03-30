@@ -4,7 +4,7 @@ const tweetSchema = new mongoose.Schema({
   tweetText: String,
   tweetMedia: String,
   timestamp: {
-    type:Date,
+    type: Date,
     default: () => Date.now(),
   },
 });
