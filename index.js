@@ -34,6 +34,15 @@ app.post("/tweets", async (req, res) => {
   res.json(allTweets);
 });
 
+app.patch("/tweets", async (req, res) => {
+  let tweet = await Tweet.findOneAndUpdate(
+    { _id: req.body.data.id },
+    { tweetText: req.body.data.text }
+  );
+console.log(tweet)
+  res.json(tweet)
+});
+
 app.delete("/tweets", async (req, res) => {
   await Tweet.deleteOne({ _id: req.body.id });
   const allTweets = await listAllTweets();
