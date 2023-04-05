@@ -24,14 +24,18 @@ app.use(
 app.use(express.json());
 
 app.get("/allTweets", async (req, res) => {
-  const allTweets = await listAllTweets();
-  res.json(allTweets);
+  
+  const tweets = await listTweets();
+  console.log("calling GET function");
+  res.json(tweets);
+
 });
 
 app.post("/tweets", async (req, res) => {
   const tweet = await run(req.body.tweetContent);
-  const allTweets = await listAllTweets();
-  res.json(allTweets);
+  const tweets = await listTweets();
+  console.log("calling POST function");
+  res.json(tweets);
 });
 
 app.patch("/tweets", async (req, res) => {
@@ -39,14 +43,13 @@ app.patch("/tweets", async (req, res) => {
     { _id: req.body.data.id },
     { tweetText: req.body.data.text }
   );
-console.log(tweet)
   res.json(tweet)
 });
 
 app.delete("/tweets", async (req, res) => {
   await Tweet.deleteOne({ _id: req.body.id });
-  const allTweets = await listAllTweets();
-  res.json(allTweets);
+  const tweets = await listTweets();
+  res.json(tweets);
 });
 
 app.listen(5000, () => {
@@ -59,8 +62,15 @@ async function run(tweetContent) {
   return tweet;
 }
 
-async function listAllTweets() {
+async function listTweets(page) {
+  const resTweets = await Tweet.find({}).sort({ timestamp: -1 }).limit(30);
+
   // list all posts
-  const allPosts = await Tweet.find({});
-  return allPosts;
+  // const allPosts = await Tweet.find({});
+
+  // Pagination
+  const tweetsPerPage = 3
+  const pageTweets = await Tweet.find({}).sort({ timestamp: -1 }).skip(page * tweetsPerPage).limit(tweetsPerPage);
+
+  return pageTweets;
 }
