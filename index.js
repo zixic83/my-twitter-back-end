@@ -24,8 +24,8 @@ app.use(
 app.use(express.json());
 
 app.get("/allTweets", async (req, res) => {
-  
-  const tweets = await listTweets();
+  const page = req.query.p;
+  const tweets = await listTweets(page);
   console.log("calling GET function");
   res.json(tweets);
 
@@ -33,7 +33,8 @@ app.get("/allTweets", async (req, res) => {
 
 app.post("/tweets", async (req, res) => {
   const tweet = await run(req.body.tweetContent);
-  const tweets = await listTweets();
+  const page = req.query.p;
+  const tweets = await listTweets(page);
   console.log("calling POST function");
   res.json(tweets);
 });
@@ -44,6 +45,15 @@ app.patch("/tweets", async (req, res) => {
     { tweetText: req.body.data.text }
   );
   res.json(tweet)
+});
+
+app.patch("/like", async (req, res) => {
+  //https://stackoverflow.com/questions/74849831/how-to-change-a-boolean-value-without-knowing-what-it-is
+  let tweet = await Tweet.findOneAndUpdate({ _id: req.body.data.id }, [
+    { $set: { Liked: { $not: "$Liked" } } },
+  ]);
+  console.log(tweet)
+  res.json(tweet);
 });
 
 app.delete("/tweets", async (req, res) => {
@@ -69,7 +79,7 @@ async function listTweets(page) {
   // const allPosts = await Tweet.find({});
 
   // Pagination
-  const tweetsPerPage = 3
+  const tweetsPerPage = 10
   const pageTweets = await Tweet.find({}).sort({ timestamp: -1 }).skip(page * tweetsPerPage).limit(tweetsPerPage);
 
   return pageTweets;
