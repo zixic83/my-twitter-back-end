@@ -2,6 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
 const Tweet = require("./Tweet");
+const User = require("./User");
 
 const connectDB = async () => {
   try {
@@ -73,8 +74,6 @@ async function run(tweetContent) {
 }
 
 async function listTweets(page) {
-  const resTweets = await Tweet.find({}).sort({ timestamp: -1 }).limit(30);
-
   // list all posts
   // const allPosts = await Tweet.find({});
 
@@ -84,3 +83,27 @@ async function listTweets(page) {
 
   return pageTweets;
 }
+
+app.get("/user", async (req, res) => {
+  const user = await User.find({});
+  res.json(user);
+  console.log(user);
+});
+
+app.post("/user", async (req, res) => {
+    const user = await User.create({});
+    await user.save();
+  res.json(user);
+});
+
+app.patch("/user", async (req, res) => {
+  let user = await User.findOneAndUpdate(
+    { _id: "642fcfd5834df8cff08abba4" },
+    { name: req.body.data.name, avatar: req.body.data.avatar },{new:true}
+  );
+   res.json(user);
+  
+});
+
+
+
