@@ -27,7 +27,6 @@ app.use(express.json());
 app.get("/allTweets", async (req, res) => {
   const page = req.query.p;
   const tweets = await listTweets(page);
-  console.log("calling GET function");
   res.json(tweets);
 
 });
@@ -36,7 +35,7 @@ app.post("/tweets", async (req, res) => {
   const tweet = await run(req.body.tweetContent);
   const page = req.query.p;
   const tweets = await listTweets(page);
-  console.log("calling POST function");
+  console.log(tweet)
   res.json(tweets);
 });
 
@@ -74,8 +73,6 @@ async function run(tweetContent) {
 }
 
 async function listTweets(page) {
-  // list all posts
-  // const allPosts = await Tweet.find({});
 
   // Pagination
   const tweetsPerPage = 10
@@ -87,7 +84,7 @@ async function listTweets(page) {
 app.get("/user", async (req, res) => {
   const user = await User.find({});
   res.json(user);
-  console.log(user);
+
 });
 
 app.post("/user", async (req, res) => {
