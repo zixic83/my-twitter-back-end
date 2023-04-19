@@ -28,14 +28,14 @@ app.get("/allTweets", async (req, res) => {
   const page = req.query.p;
   const tweets = await listTweets(page);
   res.json(tweets);
-
+  console.log('get request')
 });
 
 app.post("/tweets", async (req, res) => {
   const tweet = await run(req.body.tweetContent);
   const page = req.query.p;
   const tweets = await listTweets(page);
-  console.log(tweet)
+  
   res.json(tweets);
 });
 
