@@ -26,7 +26,7 @@ app.use(express.json());
 
 app.get("/allTweets", async (req, res) => {
   const page = req.query.p;
-  const tweets = await listTweets(page);
+  const tweets = await listTweets(page,false);
   res.json(tweets);
   console.log('get request')
 });
@@ -72,11 +72,17 @@ async function run(tweetContent) {
   return tweet;
 }
 
-async function listTweets(page) {
+async function listTweets(page,isLiked) {
 
   // Pagination
   const tweetsPerPage = 10
-  const pageTweets = await Tweet.find({}).sort({ timestamp: -1 }).skip(page * tweetsPerPage).limit(tweetsPerPage);
+  let pageTweets;
+  if (isLiked) {
+    pageTweets = await Tweet.find({ Liked: true }).sort({ timestamp: -1 }).skip(page * tweetsPerPage).limit(tweetsPerPage);
+  } else {
+    pageTweets = await Tweet.find({}).sort({ timestamp: -1 }).skip(page * tweetsPerPage).limit(tweetsPerPage);
+  }
+  
 
   return pageTweets;
 }
@@ -102,5 +108,10 @@ app.patch("/user", async (req, res) => {
   
 });
 
-
+app.get("/allFavs", async (req, res) => {
+  const page = req.query.p;
+  const likedTweets = await await listTweets(page, true);
+  res.json(likedTweets);
+  console.log("get LIKE request");
+});
 
