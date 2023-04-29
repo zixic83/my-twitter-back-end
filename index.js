@@ -26,9 +26,8 @@ app.use(express.json());
 
 app.get("/allTweets", async (req, res) => {
   const page = req.query.p;
-  const tweets = await listTweets(page,false);
+  const tweets = await listTweets(page, false);
   res.json(tweets);
-  console.log('get request')
 });
 
 app.post("/tweets", async (req, res) => {
@@ -52,7 +51,6 @@ app.patch("/like", async (req, res) => {
   let tweet = await Tweet.findOneAndUpdate({ _id: req.body.data.id }, [
     { $set: { Liked: { $not: "$Liked" } } },
   ]);
-  console.log(tweet)
   res.json(tweet);
 });
 
@@ -112,6 +110,5 @@ app.get("/allFavs", async (req, res) => {
   const page = req.query.p;
   const likedTweets = await await listTweets(page, true);
   res.json(likedTweets);
-  console.log("get LIKE request");
 });
 
