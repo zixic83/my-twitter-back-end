@@ -3,6 +3,9 @@ const cors = require("cors");
 const mongoose = require("mongoose");
 const Tweet = require("./Tweet");
 const User = require("./User");
+const cheerio = require("cheerio");
+const fetch = require("node-fetch");
+
 
 const connectDB = async () => {
   try {
@@ -112,3 +115,15 @@ app.get("/allFavs", async (req, res) => {
   res.json(likedTweets);
 });
 
+app.post("/url", async (req, res) => {
+  fetch(req.body.url)
+    .then((result) => result.text())
+    .then((html) => {
+      const $ = cheerio.load(html);
+      const title =
+        $('meta[property="og:title"]').attr("content") ||
+        $("title").text() ||
+        $('meta[name="title"]').attr("content");
+      res.send(title)
+    });
+});
