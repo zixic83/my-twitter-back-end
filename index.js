@@ -5,7 +5,7 @@ const Tweet = require("./Tweet");
 const User = require("./User");
 const cheerio = require("cheerio");
 const fetch = require("node-fetch");
-
+//https://justinyan.me/post/5344
 
 const connectDB = async () => {
   try {
@@ -37,7 +37,7 @@ app.post("/tweets", async (req, res) => {
   const tweet = await run(req.body.tweetContent);
   const page = req.query.p;
   const tweets = await listTweets(page);
-  
+
   res.json(tweets);
 });
 
@@ -46,7 +46,7 @@ app.patch("/tweets", async (req, res) => {
     { _id: req.body.data.id },
     { tweetText: req.body.data.text }
   );
-  res.json(tweet)
+  res.json(tweet);
 });
 
 app.patch("/like", async (req, res) => {
@@ -73,17 +73,21 @@ async function run(tweetContent) {
   return tweet;
 }
 
-async function listTweets(page,isLiked) {
-
+async function listTweets(page, isLiked) {
   // Pagination
-  const tweetsPerPage = 10
+  const tweetsPerPage = 10;
   let pageTweets;
   if (isLiked) {
-    pageTweets = await Tweet.find({ Liked: true }).sort({ timestamp: -1 }).skip(page * tweetsPerPage).limit(tweetsPerPage);
+    pageTweets = await Tweet.find({ Liked: true })
+      .sort({ timestamp: -1 })
+      .skip(page * tweetsPerPage)
+      .limit(tweetsPerPage);
   } else {
-    pageTweets = await Tweet.find({}).sort({ timestamp: -1 }).skip(page * tweetsPerPage).limit(tweetsPerPage);
+    pageTweets = await Tweet.find({})
+      .sort({ timestamp: -1 })
+      .skip(page * tweetsPerPage)
+      .limit(tweetsPerPage);
   }
-  
 
   return pageTweets;
 }
@@ -91,27 +95,26 @@ async function listTweets(page,isLiked) {
 app.get("/user", async (req, res) => {
   const user = await User.find({});
   res.json(user);
-
 });
 
 app.post("/user", async (req, res) => {
-    const user = await User.create({});
-    await user.save();
+  const user = await User.create({});
+  await user.save();
   res.json(user);
 });
 
 app.patch("/user", async (req, res) => {
   let user = await User.findOneAndUpdate(
     { _id: "642fcfd5834df8cff08abba4" },
-    { name: req.body.data.name, avatar: req.body.data.avatar },{new:true}
+    { name: req.body.data.name, avatar: req.body.data.avatar },
+    { new: true }
   );
-   res.json(user);
-  
+  res.json(user);
 });
 
 app.get("/allFavs", async (req, res) => {
   const page = req.query.p;
-  const likedTweets = await await listTweets(page, true);
+  const likedTweets = await listTweets(page, true);
   res.json(likedTweets);
 });
 
@@ -124,6 +127,16 @@ app.post("/url", async (req, res) => {
         $('meta[property="og:title"]').attr("content") ||
         $("title").text() ||
         $('meta[name="title"]').attr("content");
-      res.send(title)
+      res.send(title);
     });
+});
+
+app.patch("/byMon", async (req, res) => {
+  let result = await Tweet.find({
+    timestamp: {
+      $gte: new Date(req.body.data.year, req.body.data.month, 1),
+      $lt: new Date(req.body.data.year, req.body.data.month, 31),
+    },
+  });
+  res.json(result);
 });
