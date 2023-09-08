@@ -137,6 +137,6 @@ app.patch("/byMon", async (req, res) => {
       $gte: new Date(req.body.data.year, req.body.data.month, 1),
       $lt: new Date(req.body.data.year, req.body.data.month, 31),
     },
-  });
+  }).sort({ timestamp: -1 });
   res.json(result);
 });
