@@ -46,6 +46,7 @@ app.patch("/tweets", async (req, res) => {
     { _id: req.body.data.id },
     { tweetText: req.body.data.text }
   );
+  console.log(tweet)
   res.json(tweet);
 });
 

@@ -12,4 +12,8 @@ const tweetSchema = new mongoose.Schema({
   Liked: { type: Boolean, default: false },
 });
 
+// updatedAt
+//https://medium.com/@iamlittlerock/auto-generated-createdat-and-updatedat-fields-in-mongodb-86bb5980be2
+tweetSchema.set('timestamps',true)
+
 module.exports = mongoose.model("Tweet", tweetSchema);
